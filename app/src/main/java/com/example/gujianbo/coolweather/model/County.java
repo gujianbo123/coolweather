@@ -4,6 +4,16 @@ package com.example.gujianbo.coolweather.model;
  * Created by gujianbo on 16/8/28.
  */
 public class County {
+    public County() {
+    }
+
+    public County(int id, String countyName, String countyCode, int cityId) {
+        this.id = id;
+        this.countyName = countyName;
+        this.countyCode = countyCode;
+        this.cityId = cityId;
+    }
+
     private int id;
     private String countyName;
     private String countyCode;
