@@ -33,20 +33,15 @@ import java.util.List;
  * Created by gujianbo on 16/8/30.
  */
 public class ChooseAreaActivity extends Activity {
-    private static final String TAG = "ChooseAreaActivity";
-
-
     public static final int LEVEL_PROVINCE = 0;
     public static final int LEVEL_CITY = 1;
     public static final int LEVEL_COUNTY = 2;
-
     private ProgressDialog progressDialog;
     private TextView titleText;
     private ListView listView;
     private ArrayAdapter<String> adapter;
     private CoolWeatherDB coolWeatherDB;
     private List<String> dataList = new ArrayList<String>();
-
     /**
      * 省列表
      */
@@ -54,11 +49,11 @@ public class ChooseAreaActivity extends Activity {
     /**
      * 市列表
      */
-    private List<City> cityList = new ArrayList<>();
+    private List<City> cityList;
     /**
      * 县列表
      */
-    private List<County> countyList = new ArrayList<>();
+    private List<County> countyList;
     /**
      * 选中的省份
      */
@@ -72,94 +67,60 @@ public class ChooseAreaActivity extends Activity {
      */
     private int currentLevel;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences prefs = PreferenceManager.
-                getDefaultSharedPreferences(this);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.choose_area);
-
-
-        titleText = (TextView) findViewById(R.id.title_text);
         listView = (ListView) findViewById(R.id.list_view);
-
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dataList);
+        titleText = (TextView) findViewById(R.id.title_text);
+        new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dataList);
         listView.setAdapter(adapter);
+        CoolWeatherDB.getInstance(this);
 
-        coolWeatherDB = CoolWeatherDB.getInstance(this);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> arg0, View view, int index,
+                                    long arg3) {
                 if (currentLevel == LEVEL_PROVINCE) {
-                    selectedProvince = provinceList.get(position);
+                    selectedProvince = provinceList.get(index);
                     queryCities();
                 } else if (currentLevel == LEVEL_CITY) {
-                    selectedCity = cityList.get(position);
+                    selectedCity = cityList.get(index);
                     queryCounties();
-                } else if (currentLevel == LEVEL_COUNTY) {
-
-                    Intent intent = new Intent(ChooseAreaActivity.this,
-                            WeatherActivity.class);
-                    startActivity(intent);
                 }
+
+
             }
         });
-
-        queryProvinces();
-
-
+        queryProvinces(); // 加载省级数据
     }
 
+    /**
+     * 查询全国所有的省,优先从数据库查询,如果没有查询到再去服务器上查询。
+     */
     private void queryProvinces() {
         provinceList = coolWeatherDB.loadProvinces();
-
-        provinceList.add(new Province(1, "山东", "山东"));
-        provinceList.add(new Province(1, "山东", "山东"));
-        provinceList.add(new Province(1, "山东", "山东"));
-        provinceList.add(new Province(1, "山东", "山东"));
-        provinceList.add(new Province(1, "山东", "山东"));
-        provinceList.add(new Province(1, "山东", "山东"));
-        provinceList.add(new Province(1, "山东", "山东"));
-        provinceList.add(new Province(1, "山东", "山东"));
-        provinceList.add(new Province(1, "山东", "山东"));
-        provinceList.add(new Province(1, "山东", "山东"));
-
-
         if (provinceList.size() > 0) {
             dataList.clear();
             for (Province province : provinceList) {
                 dataList.add(province.getProvinceName());
-
-
             }
             adapter.notifyDataSetChanged();
             listView.setSelection(0);
             titleText.setText("中国");
             currentLevel = LEVEL_PROVINCE;
-
         } else {
             queryFromServer(null, "province");
         }
 
-
     }
 
+    /**
+     * 查询选中省内所有的市,优先从数据库查询,如果没有查询到再去服务器上查询。
+     */
     private void queryCities() {
-
-        cityList.add(new City(1, "济南", "1", 1));
-        cityList.add(new City(1, "济南", "1", 1));
-        cityList.add(new City(1, "济南", "1", 1));
-        cityList.add(new City(1, "济南", "1", 1));
-        cityList.add(new City(1, "济南", "1", 1));
-        cityList.add(new City(1, "济南", "1", 1));
-        cityList.add(new City(1, "济南", "1", 1));
-        cityList.add(new City(1, "济南", "1", 1));
-        cityList.add(new City(1, "济南", "1", 1));
-        cityList.add(new City(1, "济南", "1", 1));
-
-
+        cityList = coolWeatherDB.loadCities(selectedProvince.getId());
         if (cityList.size() > 0) {
             dataList.clear();
             for (City city : cityList) {
@@ -172,25 +133,13 @@ public class ChooseAreaActivity extends Activity {
         } else {
             queryFromServer(selectedProvince.getProvinceCode(), "city");
         }
-
     }
 
-
+    /**
+     * 查询选中市内所有的县,优先从数据库查询,如果没有查询到再去服务器上查询。
+     */
     private void queryCounties() {
-        //countyList = coolWeatherDB.loadCounties(selectedCity.getId());
-
-        countyList.add(new County(1, "章丘", "1", 1));
-        countyList.add(new County(1, "章丘", "1", 1));
-        countyList.add(new County(1, "章丘", "1", 1));
-        countyList.add(new County(1, "章丘", "1", 1));
-        countyList.add(new County(1, "章丘", "1", 1));
-        countyList.add(new County(1, "章丘", "1", 1));
-        countyList.add(new County(1, "章丘", "1", 1));
-        countyList.add(new County(1, "章丘", "1", 1));
-        countyList.add(new County(1, "章丘", "1", 1));
-        countyList.add(new County(1, "章丘", "1", 1));
-
-
+        countyList = coolWeatherDB.loadCounties(selectedCity.getId());
         if (countyList.size() > 0) {
             dataList.clear();
             for (County county : countyList) {
@@ -205,11 +154,14 @@ public class ChooseAreaActivity extends Activity {
         }
     }
 
-
+    /**
+     * 根据传入的代号和类型从服务器上查询省市县数据
+     */
     private void queryFromServer(final String code, final String type) {
         String address;
         if (!TextUtils.isEmpty(code)) {
-            address = "http://www.weather.com.cn/data/list3/city" + code + ".xml";
+            address = "http://www.weather.com.cn/data/list3/city" + code +
+                    ".xml";
         } else {
             address = "http://www.weather.com.cn/data/list3/city.xml";
         }
@@ -239,9 +191,12 @@ public class ChooseAreaActivity extends Activity {
                             } else if ("county".equals(type)) {
                                 queryCounties();
                             }
+
                         }
                     });
+
                 }
+
 
             }
 
@@ -252,22 +207,19 @@ public class ChooseAreaActivity extends Activity {
                     public void run() {
                         closeProgressDialog();
                         Toast.makeText(ChooseAreaActivity.this, "加载失败", Toast.LENGTH_SHORT).show();
+
                     }
                 });
+
 
             }
         });
 
-
     }
 
-    private void closeProgressDialog() {
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-        }
-
-    }
-
+    /**
+     * 显示进度对话框
+     */
     private void showProgressDialog() {
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(this);
@@ -277,6 +229,17 @@ public class ChooseAreaActivity extends Activity {
         progressDialog.show();
     }
 
+    /**
+     * 关闭进度对话框
+     */
+    private void closeProgressDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
+    }
+    /**
+     * 捕获Back按键,根据当前的级别来判断,此时应该返回市列表、省列表、还是直接退出。
+     */
     @Override
     public void onBackPressed() {
         if (currentLevel == LEVEL_COUNTY) {
@@ -287,6 +250,7 @@ public class ChooseAreaActivity extends Activity {
             finish();
         }
     }
-
 }
+
+
 
