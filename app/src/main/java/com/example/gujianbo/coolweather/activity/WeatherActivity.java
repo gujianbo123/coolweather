@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.gujianbo.coolweather.R;
+import com.example.gujianbo.coolweather.service.AutoUpdateService;
 import com.example.gujianbo.coolweather.util.HttpCallbackListener;
 import com.example.gujianbo.coolweather.util.HttpUtil;
 import com.example.gujianbo.coolweather.util.Utility;
@@ -186,6 +187,7 @@ public class WeatherActivity extends Activity implements OnClickListener {
      * 从SharedPreferences文件中读取存储的天气信息,并显示到界面上。
      */
     private void showWeather() {
+
         SharedPreferences prefs = PreferenceManager.
                 getDefaultSharedPreferences(this);
         cityNameText.setText(prefs.getString("city_name", ""));
@@ -196,6 +198,9 @@ public class WeatherActivity extends Activity implements OnClickListener {
         currentDateText.setText(prefs.getString("current_date", ""));
         weatherInfoLayout.setVisibility(View.VISIBLE);
         cityNameText.setVisibility(View.VISIBLE);
+
+        Intent intent = new Intent(this, AutoUpdateService.class);
+        startService(intent);
     }
 
 }
