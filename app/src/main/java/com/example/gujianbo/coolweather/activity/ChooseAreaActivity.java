@@ -70,6 +70,7 @@ public class ChooseAreaActivity extends Activity {
      * 是否从WeatherActivity中跳转过来。
      */
     private boolean isFromWeatherActivity;
+    private  String git;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

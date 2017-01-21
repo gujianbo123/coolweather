@@ -23,7 +23,7 @@ public class CoolWeatherDB {
     /**
      * 数据库版本
      */
-    public static final int VERSION = 1;
+    public static final int VERSION = 10;
     private static CoolWeatherDB coolWeatherDB;
     private SQLiteDatabase db;
 
