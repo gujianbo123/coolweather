@@ -45,7 +45,7 @@ public class ChooseAreaActivity extends Activity {
     /**
      * 省列表
      */
-    private List<Province> provinceList;
+    private List<Province> provinceList = new ArrayList<>();
     /**
      * 市列表
      */
@@ -123,7 +123,14 @@ public class ChooseAreaActivity extends Activity {
      * 查询全国所有的省,优先从数据库查询,如果没有查询到再去服务器上查询。
      */
     private void queryProvinces() {
-        provinceList = coolWeatherDB.loadProvinces();
+
+        Province province = new Province();
+        province.setId(0);
+        province.setProvinceCode("0");
+        province.setProvinceName("江苏");
+        provinceList.add(province);
+
+        /*provinceList = coolWeatherDB.loadProvinces();
         if (provinceList.size() > 0) {
             dataList.clear();
             for (Province province : provinceList) {
@@ -135,7 +142,7 @@ public class ChooseAreaActivity extends Activity {
             currentLevel = LEVEL_PROVINCE;
         } else {
             queryFromServer(null, "province");
-        }
+        }*/
 
     }
 

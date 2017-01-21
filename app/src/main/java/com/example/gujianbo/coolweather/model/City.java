@@ -4,6 +4,7 @@ package com.example.gujianbo.coolweather.model;
  * Created by gujianbo on 16/8/28.
  */
 public class City {
+
     public City() {
     }
 
